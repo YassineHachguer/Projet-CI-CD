@@ -41,5 +41,15 @@ pipeline {
                 }
             }
         }
+        
+        stage('Deploy image') {
+            steps {
+                script {
+                    bat 'docker stop tp4-pipeline-container 2>nul || echo No container'
+                    bat 'docker rm tp4-pipeline-container 2>nul || echo No container'
+                    bat "docker run -d -p 8083:80 --name tp4-pipeline-container ${registry}:${BUILD_NUMBER}"
+                }
+            }
+        }
     }
 }
