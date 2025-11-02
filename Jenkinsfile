@@ -46,17 +46,17 @@ pipeline {
         }
 
         stage('Deploy image') {
-            steps {
-                script {
-                    // Arrêter et supprimer l'ancien conteneur si existant
-                    bat '''
-                    docker stop tp4-pipeline-container 2>nul || echo No container
-                    docker rm tp4-pipeline-container 2>nul || echo No container
-                    '''
-                    // Lancer le nouveau conteneur avec le port 8083 exposé
-                    bat "docker run -d -p 8083:80 --name tp4-pipeline-container ${registry}:${BUILD_NUMBER}"
-                }
-            }
+    steps {
+        script {
+            // Arrêter et supprimer l'ancien conteneur (ignore erreurs)
+            bat(script: 'docker stop tp4-pipeline-container', returnStatus: true)
+            bat(script: 'docker rm tp4-pipeline-container', returnStatus: true)
+
+            // Lancer le nouveau conteneur
+            bat "docker run -d -p 8083:80 --name tp4-pipeline-container ${registry}:${BUILD_NUMBER}"
         }
+    }
+}
+
     }
 }
